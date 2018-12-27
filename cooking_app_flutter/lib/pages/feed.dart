@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../widgets/recipe_grid.dart';
 import '../widgets/search_button.dart';
+import '../models/recipe.dart';
 
 class FeedPage extends StatefulWidget {
   @override
@@ -11,7 +12,7 @@ class FeedPage extends StatefulWidget {
 }
 
 class _FeedPageState extends State<FeedPage> {
-  List _recipes = [];
+  List<RecipeModel> _recipes = [];
   //filters information should be here
   //because it's supposed to be easy to manage
   //since this page would not be destroyed after a search is executed

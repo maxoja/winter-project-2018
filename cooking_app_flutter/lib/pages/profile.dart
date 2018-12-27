@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../widgets/recipe_grid.dart';
+import '../models/recipe.dart';
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -12,7 +13,7 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   String _userIdentity = null;
   String _userName = null;
-  List _recipes = [];
+  List<RecipeModel> _recipes = [];
 
   void _setUserIdentity(String value) {
     setState(() {
@@ -36,10 +37,21 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     _userIdentity = 'asdf';
     _userName = 'aasldkfj';
-    _recipes = [1, 1, 1, 1, 1, 1];
+    _recipes = [
+      RecipeModel.mock(),
+      RecipeModel.mock(),
+      RecipeModel.mock(),
+      RecipeModel.mock(),
+      RecipeModel.mock(),
+      RecipeModel.mock(),
+      RecipeModel.mock(),
+    ];
 
     return Column(
       children: <Widget>[
+        CircleAvatar(
+          backgroundImage: AssetImage('assets/temp_profile.jpeg'),
+        ),
         Text('user name : ' + _userName),
         Text('user id : ' + _userIdentity),
         Text('recipes : ' + _recipes.toString()),
