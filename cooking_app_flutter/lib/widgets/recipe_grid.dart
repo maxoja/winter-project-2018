@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../pages/recipe.dart';
 import '../models/recipe.dart';
 import 'user_band.dart';
 
@@ -31,20 +32,28 @@ class _RecipeCard extends StatelessWidget {
 
   _RecipeCard(this.recipe);
 
+  void _onPressedCard(BuildContext context) {
+    Navigator.push(context, MaterialPageRoute(builder: (context){
+      return RecipePage(recipe);
+    }));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
-      child: Column(
-        children: <Widget>[
-          //owner/ing/instr/score
-          TinyUserBand(recipe.owner),
-          Divider(),
-          Text(recipe.ingredients),
-          Divider(),
-          Text(recipe.instructions),
-          Divider(),
-          Text(recipe.score.toString()),
-        ],
+      child: MaterialButton(
+        child: Column(
+          children: <Widget>[
+            TinyUserBand(recipe.owner),
+            Divider(),
+            Text(recipe.ingredients),
+            Divider(),
+            Text(recipe.instructions),
+            Divider(),
+            Text(recipe.score.toString()),
+          ],
+        ),
+        onPressed: () => _onPressedCard(context),
       ),
     );
   }
