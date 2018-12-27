@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../widgets/recipe_grid.dart';
+import '../widgets/user_band.dart';
 import '../models/recipe.dart';
+import '../models/user.dart';
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -11,23 +13,16 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  String _userIdentity = null;
-  String _userName = null;
+  UserModel _user = UserModel.mock();
   List<RecipeModel> _recipes = [];
 
-  void _setUserIdentity(String value) {
+  void _setUser(UserModel value) {
     setState(() {
-      _userIdentity = value;
+      _user = value;
     });
   }
 
-  void _setUserName(String value) {
-    setState(() {
-      _userName = value;
-    });
-  }
-
-  void _setRecipes(List newRecipes) {
+  void _setRecipes(List<RecipeModel> newRecipes) {
     setState(() {
       this._recipes = newRecipes;
     });
@@ -35,8 +30,6 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    _userIdentity = 'asdf';
-    _userName = 'aasldkfj';
     _recipes = [
       RecipeModel.mock(),
       RecipeModel.mock(),
@@ -49,12 +42,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
     return Column(
       children: <Widget>[
-        CircleAvatar(
-          backgroundImage: AssetImage('assets/temp_profile.jpeg'),
-        ),
-        Text('user name : ' + _userName),
-        Text('user id : ' + _userIdentity),
-        Text('recipes : ' + _recipes.toString()),
+        EpicUserBand(_user),
         Divider(),
         Expanded(child: RecipeGrid(_recipes, 'No Recipe Recorded')),
       ],

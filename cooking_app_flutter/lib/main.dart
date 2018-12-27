@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'pages/profile.dart';
 import 'pages/feed.dart';
 
-void main() => runApp(MyApp());
+void main(){
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   @override

@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 
 import '../models/recipe.dart';
+import 'user_band.dart';
 
 class RecipeGrid extends StatelessWidget {
   final List<RecipeModel> recipes;
   final String noRecipeText;
 
-  RecipeGrid(this.recipes, [this.noRecipeText='Loading ...']);
+  RecipeGrid(this.recipes, [this.noRecipeText = 'Loading ...']);
 
   Widget _buildCookCard(BuildContext context, int index) {
     return _RecipeCard(recipes[index]);
@@ -31,21 +32,20 @@ class _RecipeCard extends StatelessWidget {
   _RecipeCard(this.recipe);
 
   @override
-    Widget build(BuildContext context) {
-      return Card(
-        child: Column(
-          children: <Widget>[
-            //owner/ing/instr/score
-            CircleAvatar(backgroundImage: AssetImage(recipe.owner.imageUrl),),
-            Text(recipe.owner.name),
-            Divider(),
-            Text(recipe.ingredients),
-            Divider(),
-            Text(recipe.instructions),
-            Divider(),
-            Text(recipe.score.toString()),
-          ],
-        ),
-      );
-    }
+  Widget build(BuildContext context) {
+    return Card(
+      child: Column(
+        children: <Widget>[
+          //owner/ing/instr/score
+          TinyUserBand(recipe.owner),
+          Divider(),
+          Text(recipe.ingredients),
+          Divider(),
+          Text(recipe.instructions),
+          Divider(),
+          Text(recipe.score.toString()),
+        ],
+      ),
+    );
+  }
 }
