@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:scoped_model/scoped_model.dart';
 
 import 'pages/profile.dart';
 import 'pages/feed.dart';
+import 'scoped_models/app.dart';
 
 void main() {
   runApp(MyApp());
@@ -11,9 +13,12 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Cooking App',
-      home: TabScaffold(),
+    return ScopedModel<AppModel>(
+      model: AppModel(),
+      child: MaterialApp(
+        title: 'Cooking App',
+        home: TabScaffold(),
+      ),
     );
   }
 }
@@ -28,11 +33,10 @@ class TabScaffold extends StatefulWidget {
 class _TabScaffoldState extends State<TabScaffold> {
   @override
   Widget build(BuildContext context) {
-
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark.copyWith(
       statusBarColor: Colors.blue, //or set color with: Color(0xFF0000FF)
     ));
-    
+
     return DefaultTabController(
       length: 2,
       child: Scaffold(

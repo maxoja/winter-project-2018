@@ -5,7 +5,7 @@ import '../models/recipe.dart';
 import 'user_band.dart';
 
 class RecipeGrid extends StatelessWidget {
-  final List<RecipeModel> recipes;
+  final List<Recipe> recipes;
   final String noRecipeText;
 
   RecipeGrid(this.recipes, [this.noRecipeText = 'Loading ...']);
@@ -28,7 +28,7 @@ class RecipeGrid extends StatelessWidget {
 }
 
 class _RecipeCard extends StatelessWidget {
-  final RecipeModel recipe;
+  final Recipe recipe;
 
   _RecipeCard(this.recipe);
 

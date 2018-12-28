@@ -1,6 +1,6 @@
 //??? can these models converted to immutable classes
 
-class UserModel {
+class User {
   //id
   //name
   //(later) profile image
@@ -10,14 +10,13 @@ class UserModel {
   since it would be meaningless to have only post ids without content 
   */
 
-  String id;
-  String name;
-  String imageUrl;
+  final String id;
+  final String name;
+  final String imageUrl;
 
-  UserModel(this.id, this.name, [this.imageUrl='assets/temp_profile.jpeg']);
-  UserModel.fromJson(Map<String, dynamic> json) :
-  id = json['id'], name = json['name'];
-  UserModel.mock(): this('12392','abaran');
+  User(this.id, this.name, [this.imageUrl='assets/temp_profile.jpeg']);
+  User.fromJson(Map<String, dynamic> json) :this(json['id'], json['name']);
+  User.mock(): this('12392','abaran');
 
   Map<String, dynamic> toJson() => {
     'id':id,

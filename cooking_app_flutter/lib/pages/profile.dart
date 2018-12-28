@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:scoped_model/scoped_model.dart';
 
 import './add.dart';
 import '../widgets/recipe_grid.dart';
 import '../widgets/user_band.dart';
-import '../models/recipe.dart';
-import '../models/user.dart';
+import '../scoped_models/app.dart';
+
+
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -14,40 +16,17 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  UserModel _user = UserModel.mock();
-  List<RecipeModel> _recipes = [];
-
-  void _setUser(UserModel value) {
-    setState(() {
-      _user = value;
-    });
-  }
-
-  void _setRecipes(List<RecipeModel> newRecipes) {
-    setState(() {
-      this._recipes = newRecipes;
-    });
-  }
 
   void _onPressedAdd(BuildContext context){
     Navigator.push(context, MaterialPageRoute(builder:(context){
-      return AddPage(_user);
+      return AddPage();
     }));
   }
 
   @override
   Widget build(BuildContext context) {
-    _recipes = [
-      RecipeModel.mock(),
-      RecipeModel.mock(),
-      RecipeModel.mock(),
-      RecipeModel.mock(),
-      RecipeModel.mock(),
-      RecipeModel.mock(),
-      RecipeModel.mock(),
-    ];
-
-    return Scaffold(
+    return ScopedModelDescendant(builder: (context, child, AppModel model){
+      return  Scaffold(
       // appBar: AppBar(title:Text('Profile')),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
@@ -55,11 +34,12 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
       body: Column(
         children: <Widget>[
-          EpicUserBand(_user),
+          EpicUserBand(model.user),
           Divider(),
-          Expanded(child: RecipeGrid(_recipes, 'No Recipe Recorded')),
+          Expanded(child: RecipeGrid(model.recipes,'No Recipe Recorded')),
         ],
       ),
     );
+    },);
   }
 }

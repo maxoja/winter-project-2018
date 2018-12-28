@@ -6,7 +6,7 @@ import '../widgets/reaction_bar.dart';
 
 
 class RecipePage extends StatefulWidget {
-  final RecipeModel recipe;
+  final Recipe recipe;
 
   RecipePage(this.recipe);
 
@@ -15,7 +15,7 @@ class RecipePage extends StatefulWidget {
 }
 
 class _RecipePageState extends State<RecipePage> {
-  RecipeModel _recipe;
+  Recipe _recipe;
 
   @override
     void initState() {

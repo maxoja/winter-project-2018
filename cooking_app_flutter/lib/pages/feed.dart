@@ -12,7 +12,7 @@ class FeedPage extends StatefulWidget {
 }
 
 class _FeedPageState extends State<FeedPage> {
-  List<RecipeModel> _recipes = [];
+  List<Recipe> _recipes = [];
   //filters information should be here
   //because it's supposed to be easy to manage
   //since this page would not be destroyed after a search is executed

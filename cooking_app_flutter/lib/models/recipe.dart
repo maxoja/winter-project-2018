@@ -1,22 +1,22 @@
 import 'user.dart';
 
-class RecipeModel {
+class Recipe {
   //user model of owner -> id/name/profile
   //title
   //ingredients
   //steps
   //like/dislike status
 
-  UserModel owner;
-  String title;
-  String ingredients;
-  String instructions;
-  int score;
+  final User owner;
+  final String title;
+  final String ingredients;
+  final String instructions;
+  final int score;
 
-  RecipeModel(this.owner, this.title, this.ingredients, this.instructions, this.score);
-  RecipeModel.mock():this(UserModel.mock(), 'ttitle', 'tingre', 'tinstructions', 0);
-  RecipeModel.fromJson(Map<String, dynamic> json)
-      : owner = UserModel.fromJson(json['owner']),
+  Recipe(this.owner, this.title, this.ingredients, this.instructions, this.score);
+  Recipe.mock():this(User.mock(), 'ttitle', 'tingre', 'tinstructions', 0);
+  Recipe.fromJson(Map<String, dynamic> json)
+      : owner = User.fromJson(json['owner']),
         title = json['title'],
         ingredients = json['ingredients'],
         instructions = json['instructions'],

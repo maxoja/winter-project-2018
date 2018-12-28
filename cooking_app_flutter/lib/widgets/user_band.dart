@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/user.dart';
 
 class TinyUserBand extends StatelessWidget {
-  final UserModel user;
+  final User user;
 
   TinyUserBand(this.user);
 
@@ -20,7 +20,7 @@ class TinyUserBand extends StatelessWidget {
 
 
 class EpicUserBand extends StatelessWidget {
-  final UserModel user;
+  final User user;
 
   EpicUserBand(this.user);
 
