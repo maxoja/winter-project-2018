@@ -27,7 +27,7 @@ class _FeedPageState extends State<FeedPage> {
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        SizedBox(height: 5,),
+        // SizedBox(height: 5,),
         SearchButton(this),
         SizedBox(height: 10,),
         Expanded(child:RecipeGrid(_recipes)),
