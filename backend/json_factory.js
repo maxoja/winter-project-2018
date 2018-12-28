@@ -1,3 +1,3 @@
-module.exports = (successStatus, value) => { 
-    ({"success":successStatus, "value":value});
+module.exports = function (successStatus, value) { 
+    return {"success":successStatus, "value":value};
 }
