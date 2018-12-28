@@ -36,7 +36,7 @@ class _ProfilePageState extends State<ProfilePage> {
         children: <Widget>[
           EpicUserBand(model.user),
           Divider(),
-          Expanded(child: RecipeGrid(model.recipes,'No Recipe Recorded')),
+          Expanded(child: RecipeGrid(model.userRecipes,'No Recipe Recorded')),
         ],
       ),
     );
