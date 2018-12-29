@@ -7,6 +7,7 @@ class AppModel extends Model {
   User _user = User.mock();
   List<Recipe> _userRecipes = [];
   List<Recipe> _searchedRecipes = [];
+  String _token;
   //filters information should be here
   //because it's supposed to be easy to manage
   //since this page would not be destroyed after a search is executed
@@ -21,9 +22,16 @@ class AppModel extends Model {
 
   List<Recipe> get searchedRecipes => List.from(_searchedRecipes);
 
+  String get token => _token;
+
   AppModel() {
     for(int i = 0 ; i < 10 ; i++)
       _userRecipes.add(Recipe.mock());
+  }
+
+  void setToken(String token){
+    _token = token;
+    notifyListeners();
   }
 
   void setUser(User value) {

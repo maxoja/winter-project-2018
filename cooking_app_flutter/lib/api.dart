@@ -24,13 +24,11 @@ void callApi(String path, Function success, Function failed, [Map body]) {
   };
 
   if (body == null) {
-    print('call api $path without body');
+    print('call api $path without body\n $body');
     http.get(rootUrl + path).then(genericResponse);
   } else {
-    print('call api $path with body');
-    print(body);
-    String jsonString = jsonEncode(body);
-    http.post(rootUrl + path, body: jsonString).then(genericResponse);
+    print('call api $path with body\n $body');
+    http.post(rootUrl + path, body: body).then(genericResponse);
   }
 }
 
