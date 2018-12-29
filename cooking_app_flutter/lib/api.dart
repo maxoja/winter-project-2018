@@ -9,18 +9,26 @@ const String rootUrl = 'http://$ip:$port/';
 
 void callApi(String path, Function success, Function failed, [Map body]) {
   Function genericResponse = (http.Response response) {
+    print(response.body);
     Map pack = jsonDecode(response.body);
     if (pack['success'])
+    {
+      print('$path call success');
+      print(pack['value']);
       success(pack['value']);
+    }
     else {
-      print('requestAccount call failed');
+      print('$path call failed');
       failed(pack['value']); //value would be string in failed cases
     }
   };
 
   if (body == null) {
+    print('call api $path without body');
     http.get(rootUrl + path).then(genericResponse);
   } else {
+    print('call api $path with body');
+    print(body);
     String jsonString = jsonEncode(body);
     http.post(rootUrl + path, body: jsonString).then(genericResponse);
   }
