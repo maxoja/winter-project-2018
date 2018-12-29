@@ -20,7 +20,7 @@ function validateToken(id, token) {
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.get('/RequestID', function (req, res) {
+app.get('/requestAccount', function (req, res) {
     var newToken = generate_id();
 
     var tokens = Array.from(connection.query("SELECT token FROM users")).map(x => x['token']);
@@ -40,7 +40,7 @@ app.get('/RequestID', function (req, res) {
     res.json(jsonFactory(true, { "newUser": newUser }));
 });
 
-app.post('/ChangeName', function (req, res) {
+app.post('/changeName', function (req, res) {
     var id = req.body['id'];
     var token = req.body['token'];
     var name = req.body['name'];
@@ -53,7 +53,7 @@ app.post('/ChangeName', function (req, res) {
     res.json(jsonFactory(true, { "name": name }));
 });
 
-app.post('/CreateRecipe', function (req, res) {
+app.post('/postRecipe', function (req, res) {
     var id = req.body['id'];
     var token = req.body['token'];
     var name = req.body['name'];
@@ -62,14 +62,15 @@ app.post('/CreateRecipe', function (req, res) {
 
     if (!validateToken(id, token)) {
         res.json(jsonFactory(false, "Invalid Token."));
+        return;
     }
 
-    connection.query(`INSERT INTO recipes (uid, name, image, description) VALUES (${id}, '${name}', '${image}', '${description}')`);
+    var fields = connection.query(`INSERT INTO recipes (uid, name, image, description) VALUES (${id}, '${name}', '${image}', '${description}')`);
 
-    res.json(jsonFactory(true, null));
+    res.json(jsonFactory(true, {"rid":fields['insertId']}));
 });
 
-app.post('/GetRecipes', function (req, res) {
+app.post('/getRecipes', function (req, res) {
     var id = req.body['id'];
 
     var recipes = connection.query(`SELECT * FROM recipes WHERE uid = '${id}'`);
@@ -83,7 +84,7 @@ app.post('/GetRecipes', function (req, res) {
 //     res.json(jsonFactory(true, {"recipe-info":recipe}));
 // });
 
-app.all('/SetReaction', function (req, res) {
+app.all('/setReaction', function (req, res) {
     var uid = req.body['uid'];
     var token = req.body['token'];
     var reaction = req.body['reaction'];
@@ -91,10 +92,10 @@ app.all('/SetReaction', function (req, res) {
 
     if (!validateToken(uid, token)) {
         res.json(jsonFactory(false, "Invalid Token."));
+        return;
     }
 
     var oldReaction = connection.query(`SELECT reaction FROM reactions WHERE uid = ${uid} and rid = ${rid}`);
-    console.log(oldReaction);
 
     if (oldReaction.length == 0) {
         if (reaction != "NONE") {
@@ -102,11 +103,14 @@ app.all('/SetReaction', function (req, res) {
             connection.query(`INSERT INTO reactions (uid, rid, reaction) VALUES (${uid}, ${rid}, '${reaction}')`);
             connection.query(`UPDATE recipes SET ${updatingColumnName} = ${updatingColumnName} + 1 WHERE id = ${rid}`);
             
-            res.json(jsonFactory(true, null));
+            res.json(jsonFactory(true, {"reaction":reaction}));
+            return;
         }
         res.json(jsonFactory(false, "Setting reaction from NONE to NONE"));
     } else {
-        oldReaction = oldReaction['reaction'];
+        oldReaction = oldReaction[0]['reaction'];
+        console.log(oldReaction);
+
         if (oldReaction != reaction) {
             if (reaction != "NONE") {
                 var likeOperator, dislikeOperator;
@@ -128,19 +132,36 @@ app.all('/SetReaction', function (req, res) {
                 connection.query(`UPDATE reactions SET reaction = '${reaction}' WHERE uid = ${uid} and rid = ${rid}`);
                 connection.query(`UPDATE recipes SET likes = likes ${likeOperator} 1, dislikes = dislikes ${dislikeOperator} 1 WHERE id = ${rid}`);
 
-                res.json(jsonFactory(true, null));
+                res.json(jsonFactory(true, {"reaction":reaction}));
             } else {
                 var updatingColumnName = oldReaction == "LIKE" ? 'likes' : 'dislikes';
 
                 connection.query(`DELETE FROM reactions WHERE uid = ${uid} and rid = ${rid}`);
                 connection.query(`UPDATE recipes SET ${updatingColumnName} = ${updatingColumnName} - 1 WHERE id = ${rid}`);
                 
-                res.json(jsonFactory(true, null));
+                res.json(jsonFactory(true, {"reaction":reaction}));
             }
+            return;
         }
-
         res.json(jsonFactory(false, `Setting reaction from ${oldReaction} to ${reaction}`));
     }
+});
+
+app.all('/currentReaction', function (req, res) {
+    var uid = req.body['id'];
+    var token = req.body['token'];
+    var rid = req.body['rid'];
+
+    if (!validateToken(uid, token)) {
+        res.json(jsonFactory(false, "Invalid Token."))
+    }
+
+    var reaction = connection.query(`SELECT reaction FROM reactions WHERE uid = '${uid}' and rid = '${rid}'`);
+
+    if (reaction.length == 0) {
+        res.json(jsonFactory(true, {"reaction":"NONE"}));
+    }
+    res.json(jsonFactory(true, reaction));
 });
 
 // var maxID = null;
@@ -150,8 +171,9 @@ app.all('/SetReaction', function (req, res) {
 // var num = BigInt(results[0]['MAX(id)']);
 // maxID = num;
 
-app.listen(52094, function () {
-    console.log("Server started on port 52094.");
+PORT = 3000
+app.listen(PORT, function () {
+    console.log(`Server started on port ${PORT}.`);
 });
 
 // console.log(validateToken('1', '300'));
