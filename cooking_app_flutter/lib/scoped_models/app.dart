@@ -28,13 +28,16 @@ class AppModel extends Model {
 
   void setUser(User value) {
     _user = value;
+    notifyListeners();
   }
 
   void setUserRecipes(List<Recipe> newRecipes) {
     _userRecipes = List.from(newRecipes);
+    notifyListeners();
   }
 
     void setSearchedRecipes(List<Recipe> newRecipes) {
       _userRecipes = List.from(newRecipes);
+      notifyListeners();
   }
 }
