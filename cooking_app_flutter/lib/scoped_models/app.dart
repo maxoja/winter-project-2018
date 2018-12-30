@@ -44,6 +44,10 @@ class AppModel extends Model {
     notifyListeners();
   }
 
+void addUserRecipe(Recipe newRecipe){
+  _userRecipes.add(newRecipe);
+  notifyListeners();
+}
     void setSearchedRecipes(List<Recipe> newRecipes) {
       _userRecipes = List.from(newRecipes);
       notifyListeners();

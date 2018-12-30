@@ -11,13 +11,11 @@ void callApi(String path, Function success, Function failed, [Map body]) {
   Function genericResponse = (http.Response response) {
     print(response.body);
     Map pack = jsonDecode(response.body);
-    if (pack['success'])
-    {
+    if (pack['success']) {
       print('$path call success');
       print(pack['value']);
       success(pack['value']);
-    }
-    else {
+    } else {
       print('$path call failed');
       failed(pack['value']); //value would be string in failed cases
     }
@@ -39,6 +37,21 @@ void callRequestAccount(
 
 void callChangeName(String id, String token, String name,
     {Function(Map responseMap) success, Function(String error) failed}) {
-  return callApi(
-      'changeName', success, failed, {'id': id, 'token': token, 'name': name});
+  callApi('changeName', success, failed, {
+    'id': id,
+    'token': token,
+    'name': name,
+  });
+}
+
+void callPostRecipe(
+    String id, String token, String title, String image, int difficulty,
+    {Function(Map responseMap) success, Function(String error) failed}) {
+  callApi('postRecipe', success, failed, {
+    'id': id,
+    'token': token,
+    'title': title,
+    'image': image,
+    'difficulty': difficulty.toString(),
+  });
 }

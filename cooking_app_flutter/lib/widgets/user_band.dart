@@ -12,7 +12,7 @@ class TinyUserBand extends StatelessWidget {
       return Row(
         children: <Widget>[
           CircleAvatar(backgroundImage: AssetImage(user.imageUrl),),
-          Text(user.id),
+          Text(user.name),
         ],
       );
     }
@@ -29,7 +29,7 @@ class EpicUserBand extends StatelessWidget {
       return Row(
         children: <Widget>[
           CircleAvatar(backgroundImage: AssetImage(user.imageUrl),radius: 50,),
-          Text(user.id),
+          Text(user.name),
         ],
       );
     }

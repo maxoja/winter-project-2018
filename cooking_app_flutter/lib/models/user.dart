@@ -22,4 +22,9 @@ class User {
     'id':id,
     'name':name,
   };
+
+  @override
+    String toString() {
+      return toJson().toString();
+    }
 }

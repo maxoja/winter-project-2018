@@ -9,24 +9,28 @@ class Recipe {
 
   final User owner;
   final String title;
-  final String ingredients;
-  final String instructions;
-  final int score;
+  final String description;
+  final int difficulty;
+  final int likes;
+  final int dislikes;
 
-  Recipe(this.owner, this.title, this.ingredients, this.instructions, this.score);
-  Recipe.mock():this(User.mock(), 'ttitle', 'tingre', 'tinstructions', 0);
+  Recipe(this.owner, this.title, this.description, this.difficulty, this.likes,
+      this.dislikes);
+  Recipe.mock() : this(User.mock(), 'ttitle', 'tdescription', 1, 0, 0);
   Recipe.fromJson(Map<String, dynamic> json)
       : owner = User.fromJson(json['owner']),
         title = json['title'],
-        ingredients = json['ingredients'],
-        instructions = json['instructions'],
-        score = json['score'];
+        description = json['description'],
+        difficulty = json['difficulty'],
+        likes = json['likes'],
+        dislikes = json['dislikes'];
 
   Map<String, dynamic> toJson() => {
-    'owner': owner.toJson(),
-    'title': title,
-    'ingredients': ingredients,
-    'instructions' : instructions,
-    'score' : score
-  };
+        'owner': owner.toJson(),
+        'title': title,
+        'description': description,
+        'difficulty': difficulty,
+        'likes': likes,
+        'dislikes': dislikes,
+      };
 }
