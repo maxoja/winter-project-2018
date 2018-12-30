@@ -4,6 +4,7 @@ import 'package:scoped_model/scoped_model.dart';
 import '../api.dart' as api;
 import '../models/user.dart';
 import '../scoped_models/app.dart';
+import '../widgets/two_options.dart';
 
 class InitAccountDialog extends StatefulWidget {
   @override
@@ -16,6 +17,27 @@ class _InitAccountDialogState extends State<InitAccountDialog> {
   String _newUserName = '';
   GlobalKey<FormState> _formKey = GlobalKey();
 
+  @override
+  Widget build(BuildContext context) {
+    return ScopedModelDescendant<AppModel>(
+      builder: (context, child, AppModel model) {
+        return Dialog(
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _buildTextInput(context, model),
+                SizedBox(height: 30),
+                _buildButtonBar(context, model),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   String _validate(String input) {
     if (input == '') return null;
     input = input.trim();
@@ -25,6 +47,7 @@ class _InitAccountDialogState extends State<InitAccountDialog> {
   }
 
   void _onSubmit(AppModel model) {
+    print('submit');
     if (!_formKey.currentState.validate()) {
       print('[ invalid name ]');
       return;
@@ -33,12 +56,12 @@ class _InitAccountDialogState extends State<InitAccountDialog> {
     _formKey.currentState.save();
 
     //if user want to use default name
-    if(_newUserName == '')
-    {
+    if (_newUserName == '') {
+      print('[ user default name ]');
       Navigator.pop(context);
       return;
     }
-    
+
     api.callChangeName(
       model.user.id,
       model.token,
@@ -52,48 +75,27 @@ class _InitAccountDialogState extends State<InitAccountDialog> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return ScopedModelDescendant<AppModel>(
-      builder: (context, child, AppModel model) {
-        return Dialog(
-          child: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextFormField(
-                  decoration: InputDecoration(
-                      labelText: 'Account Nickname', hintText: model.user.name),
-                  validator: _validate,
-                  onSaved: (String value) {
-                    _newUserName = value.trim();
-                  },
-                ),
-                SizedBox(
-                  height: 30,
-                ),
-                Row(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    RaisedButton(
-                      child: Text('Skip'),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                    ),
-                    RaisedButton(
-                      child: Text('Submit'),
-                      onPressed: () => _onSubmit(model),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        );
+  Widget _buildTextInput(BuildContext context, AppModel model) {
+    var decoration = InputDecoration(
+      labelText: 'Account Nickname',
+      hintText: model.user.name,
+    );
+
+    return TextFormField(
+      decoration: decoration,
+      validator: _validate,
+      onSaved: (String value) {
+        _newUserName = value.trim();
       },
+    );
+  }
+
+  Widget _buildButtonBar(BuildContext context, AppModel model) {
+    return TwoOptionsButtonBar(
+      leftText: 'Skip',
+      rightText: 'Submit',
+      onLeft: () => Navigator.pop(context),
+      onRight: () => _onSubmit(model),
     );
   }
 }
