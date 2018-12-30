@@ -47,7 +47,6 @@ class _InitAccountDialogState extends State<InitAccountDialog> {
   }
 
   void _onSubmit(AppModel model) {
-    print('submit');
     if (!_formKey.currentState.validate()) {
       print('[ invalid name ]');
       return;

@@ -7,11 +7,14 @@ import 'user_band.dart';
 class RecipeGrid extends StatelessWidget {
   final List<Recipe> recipes;
   final String noRecipeText;
+  final bool minimal;
 
-  RecipeGrid(this.recipes, [this.noRecipeText = 'Loading ...']);
+  RecipeGrid(this.recipes,
+      {this.noRecipeText = 'Loading ...', this.minimal = false});
 
   Widget _buildCookCard(BuildContext context, int index) {
-    return _RecipeCard(recipes[index]);
+    Recipe recipe = recipes[index];
+    return minimal ? _MiniRecipeCard(recipe) : _FullRecipeCard(recipe);
   }
 
   @override
@@ -27,13 +30,13 @@ class RecipeGrid extends StatelessWidget {
   }
 }
 
-class _RecipeCard extends StatelessWidget {
+class _FullRecipeCard extends StatelessWidget {
   final Recipe recipe;
 
-  _RecipeCard(this.recipe);
+  _FullRecipeCard(this.recipe);
 
   void _onPressedCard(BuildContext context) {
-    Navigator.push(context, MaterialPageRoute(builder: (context){
+    Navigator.push(context, MaterialPageRoute(builder: (context) {
       return RecipePage(recipe);
     }));
   }
@@ -46,6 +49,35 @@ class _RecipeCard extends StatelessWidget {
           children: <Widget>[
             TinyUserBand(recipe.owner),
             Divider(),
+            Text(recipe.description),
+            Text(recipe.difficulty.toString()),
+            Divider(),
+            Text('${recipe.likes} - ${recipe.dislikes}'),
+          ],
+        ),
+        onPressed: () => _onPressedCard(context),
+      ),
+    );
+  }
+}
+
+class _MiniRecipeCard extends StatelessWidget {
+  final Recipe recipe;
+
+  _MiniRecipeCard(this.recipe);
+
+  void _onPressedCard(BuildContext context) {
+    Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return RecipePage(recipe);
+    }));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: MaterialButton(
+        child: Column(
+          children: <Widget>[
             Text(recipe.description),
             Text(recipe.difficulty.toString()),
             Divider(),

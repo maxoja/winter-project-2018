@@ -3,7 +3,6 @@ import 'package:scoped_model/scoped_model.dart';
 
 import '../widgets/recipe_grid.dart';
 import '../widgets/search_button.dart';
-import '../models/recipe.dart';
 import '../scoped_models/app.dart';
 
 class FeedPage extends StatefulWidget {
