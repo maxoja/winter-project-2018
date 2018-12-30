@@ -20,6 +20,41 @@ function validateToken(id, token) {
     return userCount[0]['COUNT(*)'] == 1;
 }
 
+function usernameFromID(uid) {
+    var username = connection.query(`SELECT name FROM users WHERE id = ${uid}`);
+
+    if (username.length == 0) {
+        return "";
+    }
+    return username[0]['name'];
+}
+
+function tagsOfRecipe(rid) {
+    var tags = connection.query(`SELECT tag FROM tags WHERE id IN 
+                                    (SELECT tid FROM rectag WHERE rid = ${rid})`);
+    return tags.map(x => x['tag']);
+}
+
+function addTagToDatabase(tag) {
+    var fields = connection.query(`INSERT INTO tags (tag) VALUES ('${tag}')`);
+    return fields['insertId'];
+}
+
+function adjustRecipeFormat(recipe, username = null) {
+    var uid = recipe['uid'];
+
+    username = username === null ? usernameFromID(uid) : username;
+
+    recipe['rid'] = recipe['id'];
+    recipe['owner'] = { 'id': uid, 'name': username };
+    recipe['tags'] = tagsOfRecipe(recipe['rid']);
+
+    delete recipe['id'];
+    delete recipe['uid'];
+
+    return recipe;
+}
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -49,8 +84,6 @@ app.all('/changeName', function (req, res) {
     var token = req.body['token'];
     var name = req.body['name'];
 
-    console.log(id, token, name);
-
     if (!validateToken(id, token)) {
         res.json(jsonFactory(false, "Invalid Token."));
     }
@@ -67,6 +100,7 @@ app.post('/postRecipe', function (req, res) {
     var image = req.body['image'];
     var description = req.body['description'];
     var difficulty = req.body['difficulty'];
+    var tags = req.body['tags'];
 
     if (!validateToken(id, token)) {
         res.json(jsonFactory(false, "Invalid Token."));
@@ -74,18 +108,41 @@ app.post('/postRecipe', function (req, res) {
     }
 
     var fields = connection.query(`INSERT INTO recipes (uid, title, image, description, difficulty) VALUES (${id}, '${title}', '${image}', '${description}', ${difficulty})`);
+    var rid = fields['insertId'];
 
-    res.json(jsonFactory(true, { "rid": fields['insertId'] }));
+    var tagTable = connection.query(`SELECT * FROM tags`);
+    var tids = tagTable.map(x => x['id']);
+    var existingTags = tagTable.map(x => x['tag']);
+
+    for (var i in tags) {
+        //addTagToRecipe(rid, tags[i]);
+        var tagExist = existingTags.indexOf(tags[i]);
+        var tid;
+        if (tagExist == -1) {
+            tid = addTagToDatabase(tags[i]);
+        } else {
+            tid = tids[tagExist];
+        }
+        connection.query(`INSERT INTO rectag (rid, tid) VALUES (${rid}, ${tid})`);
+    }
+
+    res.json(jsonFactory(true, { "rid": rid }));
 });
 
-app.post('/getRecipes', function (req, res) {
-
-    //INCLUDE USERNAME;
+app.post('/getProfile', function (req, res) {
 
     var id = req.body['id'];
 
-    var recipes = connection.query(`SELECT * FROM recipes WHERE uid = '${id}'`);
-    res.json(jsonFactory(true, { "recipes": recipes }));
+    var username = usernameFromID(id);
+    if (username == "") {
+        res.json(jsonFactory(false, "No user with id: ${id}"));
+        return;
+    }
+
+    var recipes = connection.query(`SELECT * FROM recipes WHERE uid = ${id}`);
+    recipes = recipes.map(x => adjustRecipeFormat(x, username));
+
+    res.json(jsonFactory(true, { "user": { "id": id, "name": username }, "recipes": recipes }));
 });
 
 app.all('/setReaction', function (req, res) {
@@ -114,7 +171,6 @@ app.all('/setReaction', function (req, res) {
         res.json(jsonFactory(false, "Setting reaction from NONE to NONE"));
     } else {
         oldReaction = oldReaction[0]['reaction'];
-        console.log(oldReaction);
 
         if (oldReaction != reaction) {
             if (reaction != "NONE") {
@@ -153,6 +209,7 @@ app.all('/setReaction', function (req, res) {
 });
 
 app.all('/currentReaction', function (req, res) {
+
     var uid = req.body['id'];
     var token = req.body['token'];
     var rid = req.body['rid'];
@@ -173,6 +230,8 @@ app.all('/currentReaction', function (req, res) {
 
 app.all('/randomRecipes', function (req, res) {
 
+    console.log("START");
+
     var uid = req.body['id'];
 
     var recipes = connection.query(`SELECT * FROM recipes WHERE uid != ${uid}`);
@@ -180,15 +239,17 @@ app.all('/randomRecipes', function (req, res) {
     var recipeCount = recipes.length > RANDOM_RECIPE_COUNT ? RANDOM_RECIPE_COUNT : recipes.length;
 
     var pickedRecipes = []
-
     for (var i = 0; i < recipeCount; ++i) {
         var randomizedIndex = Math.floor(Math.random() * recipes.length);
-        console.log(recipes.length, randomizedIndex);
         pickedRecipes.push(recipes[randomizedIndex]);
         recipes.splice(randomizedIndex, 1);
     }
 
+    pickedRecipes = pickedRecipes.map(x => adjustRecipeFormat(x));
+
     res.json(jsonFactory(true, { "recipes": pickedRecipes }));
+
+    console.log("END");
 });
 
 app.all('/search', function (req, res) {
@@ -198,21 +259,23 @@ app.all('/search', function (req, res) {
     var difficulty = req.body['difficulty'];
 
     var titleCondition = `title LIKE '%${title}%'`;
-    
+
     var difficultyCondition = difficulty === null ? '' : `and difficulty <= ${difficulty}`;;
 
     var recipes = connection.query(`SELECT * FROM recipes WHERE ${titleCondition} ${difficultyCondition}`);
 
-    recipes = recipes.filter(function(recipe) {
-        for (var i in ingredients) {
-            if (!recipe['description'].toLowerCase().includes(ingredients[i].toLowerCase())) {
-                return false;
-            }
-        }
+    recipes = recipes.filter(function (recipe) {
+        // for (var i in ingredients) {
+        //     if (!recipe['description'].toLowerCase().includes(ingredients[i].toLowerCase())) {
+        //         return false;
+        //     }
+        // }
         return true;
     })
 
-    res.json(jsonFactory(true, { "recipes":recipes }));
+    recipes = recipes.map(x => adjustRecipeFormat(x));
+
+    res.json(jsonFactory(true, { "recipes": recipes }));
 });
 
 PORT = 3000
