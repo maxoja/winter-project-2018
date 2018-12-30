@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 
@@ -10,51 +8,58 @@ import 'init_account.dart';
 import '../models/user.dart';
 
 class LandingPage extends StatelessWidget {
-  Widget _buildFloatButton(context) {
-    return ScopedModelDescendant<AppModel>(
-      builder: (context, child, AppModel model) {
-        return FloatingActionButton(
-          onPressed: () {
-            api.callRequestAccount(
-              success: (Map responseMap) {
-                Map newUserMap = responseMap['newUser'];
-                User newUser = User.fromJson(newUserMap);
-                model.setUser(newUser);
-                model.setToken(newUserMap['token']);
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(color: Colors.red),
+      floatingActionButton: ScopedModelDescendant<AppModel>(
+        builder: (context, child, AppModel model) {
+          return _buildFloatButton(context, model);
+        },
+      ),
+    );
+  }
 
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) {
-                      return TabsPage();
-                    },
-                  ),
-                );
-
-                showDialog(context: context, builder: (context){
-                  return InitAccountDialog();
-                });
-              },
-              failed: (String error) {
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    Text('error occurred : $error');
-                  },
-                );
-                //stay this page and promp something
-              },
-            );
-          },
+  Widget _buildFloatButton(context, model) {
+    return FloatingActionButton(
+      onPressed: () {
+        api.callRequestAccount(
+          success: (Map responseMap) => _onSuccess(context, model, responseMap),
+          failed: (String error) => _onFailed(context, model, error),
         );
       },
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        body: Container(color: Colors.red),
-        floatingActionButton: _buildFloatButton(context));
+  void _onSuccess(context, AppModel model, Map responseMap) {
+    Map newUserMap = responseMap['newUser'];
+    User newUser = User.fromJson(newUserMap);
+    model.setUser(newUser);
+    model.setToken(newUserMap['token']);
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) {
+          return TabsPage();
+        },
+      ),
+    );
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return InitAccountDialog();
+      },
+    );
+  }
+
+  void _onFailed(context, AppModel model, String error) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        Text('error occurred : $error');
+      },
+    );
   }
 }
