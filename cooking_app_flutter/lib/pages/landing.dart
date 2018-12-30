@@ -6,6 +6,7 @@ import 'tabs.dart';
 import '../api.dart' as api;
 import 'init_account.dart';
 import '../models/user.dart';
+import '../models/recipe.dart';
 
 class LandingPage extends StatelessWidget {
   @override
@@ -52,6 +53,17 @@ class LandingPage extends StatelessWidget {
         return InitAccountDialog();
       },
     );
+
+    api.callRandomRecipes(model.user.id,
+    success: (response){
+      List recipes = response['recipes'];
+      recipes = recipes.map((json)=>Recipe.fromJson(json)).toList();
+      print(recipes);
+      model.setSearchedRecipes(recipes);
+    }, 
+    failed: (error){
+      // print(error);
+    });
   }
 
   void _onFailed(context, AppModel model, String error) {

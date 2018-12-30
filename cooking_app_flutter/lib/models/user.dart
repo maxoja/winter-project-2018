@@ -15,7 +15,7 @@ class User {
   final String imageUrl;
 
   User(this.id, this.name, [this.imageUrl='assets/temp_profile.jpeg']);
-  User.fromJson(Map<String, dynamic> json) :this(json['id'], json['name']);
+  User.fromJson(Map<String, dynamic> json) :this(json['id'].toString(), json['name']);
   User.mock(): this('12392','abaran');
 
   Map<String, dynamic> toJson() => {

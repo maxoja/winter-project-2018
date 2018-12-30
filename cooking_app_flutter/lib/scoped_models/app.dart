@@ -25,8 +25,8 @@ class AppModel extends Model {
   String get token => _token;
 
   AppModel() {
-    for(int i = 0 ; i < 10 ; i++)
-      _userRecipes.add(Recipe.mock());
+    // for(int i = 0 ; i < 10 ; i++)
+    //   _userRecipes.add(Recipe.mock());
   }
 
   void setToken(String token){
@@ -49,7 +49,7 @@ void addUserRecipe(Recipe newRecipe){
   notifyListeners();
 }
     void setSearchedRecipes(List<Recipe> newRecipes) {
-      _userRecipes = List.from(newRecipes);
+      _searchedRecipes = List.from(newRecipes);
       notifyListeners();
   }
 }

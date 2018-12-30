@@ -55,3 +55,40 @@ void callPostRecipe(
     'difficulty': difficulty.toString(),
   });
 }
+
+void callGetProfile(String uid, {Function(Map responseMap) success, Function(String error) failed}){
+  callApi('getProfile', success, failed,{'id':uid});
+}
+
+void callRandomRecipes(String id, {Function(Map responseMap) success, Function(String error) failed}){
+  callApi('randomRecipes', success, failed, {
+    'id':id
+  });
+}
+
+//return String
+void callCurrentReaction(String uid, String token, String rid, {Function(Map responseMap) success, Function(String error) failed}){
+  callApi('currentReaction', success, failed, {
+    'uid': uid,
+    'token': token,
+    'rid': rid,
+  });
+}
+
+void callSetReaction(String uid, String token, String reaction, String rid, {Function(Map responseMap) success, Function(String error) failed}){
+  callApi('setReaction', success, failed, {
+    'uid': uid,
+    'token': token,
+    'reaction': reaction,
+    'rid': rid,
+  });
+}
+
+//difficulty = 0,1,2,10
+void callSearch(String title, List<String> tags, int difficulty, {Function(Map responseMap) success, Function(String error) failed}){
+  callApi('search', success, failed, {
+    'title':title,
+    'tags': tags.map((ing)=>'"'+ing+'"').toString(),
+    'difficulty': difficulty.toString(),
+  });
+}
