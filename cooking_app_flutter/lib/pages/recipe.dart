@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../models/recipe.dart';
 import '../widgets/user_band.dart';
 import '../widgets/reaction_bar.dart';
+import '../api.dart' as api;
+import '../scoped_models/app.dart';
 
 class RecipePage extends StatefulWidget {
   final Recipe recipe;

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:scoped_model/scoped_model.dart';
 
 import '../pages/recipe.dart';
 import '../models/recipe.dart';
 import 'user_band.dart';
+import '../scoped_models/app.dart';
 
 class RecipeGrid extends StatelessWidget {
   final List<Recipe> recipes;
@@ -13,8 +15,12 @@ class RecipeGrid extends StatelessWidget {
       {this.noRecipeText = 'Loading ...', this.minimal = false});
 
   Widget _buildCookCard(BuildContext context, int index) {
+    return ScopedModelDescendant<AppModel>(
+      builder: (context, child, AppModel model) {
     Recipe recipe = recipes[index];
-    return minimal ? _MiniRecipeCard(recipe) : _FullRecipeCard(recipe);
+        return minimal ? _MiniRecipeCard(recipe, model) : _FullRecipeCard(recipe, model);
+      },
+    );
   }
 
   @override
@@ -32,10 +38,12 @@ class RecipeGrid extends StatelessWidget {
 
 class _FullRecipeCard extends StatelessWidget {
   final Recipe recipe;
+  final AppModel model;
 
-  _FullRecipeCard(this.recipe);
+  _FullRecipeCard(this.recipe, this.model);
 
   void _onPressedCard(BuildContext context) {
+    model.setSelectedRecipe(recipe);
     Navigator.push(context, MaterialPageRoute(builder: (context) {
       return RecipePage(recipe);
     }));
@@ -63,10 +71,12 @@ class _FullRecipeCard extends StatelessWidget {
 
 class _MiniRecipeCard extends StatelessWidget {
   final Recipe recipe;
+  final AppModel model;
 
-  _MiniRecipeCard(this.recipe);
+  _MiniRecipeCard(this.recipe, this.model);
 
   void _onPressedCard(BuildContext context) {
+    model.setSelectedRecipe(recipe);
     Navigator.push(context, MaterialPageRoute(builder: (context) {
       return RecipePage(recipe);
     }));

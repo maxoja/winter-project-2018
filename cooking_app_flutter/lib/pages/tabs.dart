@@ -36,7 +36,7 @@ class _TabsPageState extends State<TabsPage> {
           padding: EdgeInsets.only(top: 25),
           child: TabBarView(
             children: <Widget>[
-              ProfilePage(),
+              ProfilePanel(),
               FeedPage(),
             ],
           ),

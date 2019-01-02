@@ -9,14 +9,14 @@ import '../api.dart' as api;
 //todo random feed implementation
 //call api at init state method
 
-class FeedPage extends StatefulWidget {
+class FeedPanel extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return _FeedPageState();
+    return _FeedPanelState();
   }
 }
 
-class _FeedPageState extends State<FeedPage> {
+class _FeedPanelState extends State<FeedPanel> {
   @override
   Widget build(BuildContext context) {
     return ScopedModelDescendant(

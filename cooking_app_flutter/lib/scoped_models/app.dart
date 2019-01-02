@@ -8,6 +8,7 @@ class AppModel extends Model {
   List<Recipe> _userRecipes = [];
   List<Recipe> _searchedRecipes = [];
   String _token;
+  Recipe _selectedRecipe;
   //filters information should be here
   //because it's supposed to be easy to manage
   //since this page would not be destroyed after a search is executed
@@ -24,12 +25,14 @@ class AppModel extends Model {
 
   String get token => _token;
 
+  Recipe get selectedRecipe => _selectedRecipe;
+
   AppModel() {
     // for(int i = 0 ; i < 10 ; i++)
     //   _userRecipes.add(Recipe.mock());
   }
 
-  void setToken(String token){
+  void setToken(String token) {
     _token = token;
     notifyListeners();
   }
@@ -44,12 +47,18 @@ class AppModel extends Model {
     notifyListeners();
   }
 
-void addUserRecipe(Recipe newRecipe){
-  _userRecipes.add(newRecipe);
-  notifyListeners();
-}
-    void setSearchedRecipes(List<Recipe> newRecipes) {
-      _searchedRecipes = List.from(newRecipes);
-      notifyListeners();
+  void setSelectedRecipe(Recipe recipe){
+    _selectedRecipe = recipe;
+    notifyListeners();
+  }
+
+  void addUserRecipe(Recipe newRecipe) {
+    _userRecipes.add(newRecipe);
+    notifyListeners();
+  }
+
+  void setSearchedRecipes(List<Recipe> newRecipes) {
+    _searchedRecipes = List.from(newRecipes);
+    notifyListeners();
   }
 }

@@ -54,15 +54,24 @@ class LandingPage extends StatelessWidget {
       },
     );
 
-    api.callRandomRecipes(model.user.id,
-    success: (response){
+    api.callRandomRecipes(model.user.id, 
+    success: (response) {
       List recipes = response['recipes'];
-      recipes = recipes.map((json)=>Recipe.fromJson(json)).toList();
-      print(recipes);
+      recipes = recipes.map((json) => Recipe.fromJson(json)).toList();
       model.setSearchedRecipes(recipes);
     }, 
-    failed: (error){
+    failed: (error) {
       // print(error);
+    });
+
+    api.callGetProfile(model.user.id, 
+    success: (response){
+      List recipes = response['recipes'];
+      recipes = recipes.map((json) => Recipe.fromJson(json)).toList();
+      model.setUserRecipes(recipes);
+    },
+    failed: (error){
+
     });
   }
 

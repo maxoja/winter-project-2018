@@ -6,14 +6,14 @@ import '../widgets/recipe_grid.dart';
 import '../widgets/user_band.dart';
 import '../scoped_models/app.dart';
 
-class ProfilePage extends StatefulWidget {
+class ProfilePanel extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return _ProfilePageState();
+    return _ProfilePanelState();
   }
 }
 
-class _ProfilePageState extends State<ProfilePage> {
+class _ProfilePanelState extends State<ProfilePanel> {
   void _onPressedAdd(BuildContext context) {
     Navigator.push(context, MaterialPageRoute(builder: (context) {
       return AddPage();
