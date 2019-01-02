@@ -13,7 +13,8 @@
     "babel-register": "^6.26.0",
     "body-parser": "*",
     "express": "*",
-    "mysql": "^2.16.0",
-    "sync-mysql": "^3.0.1"
+    "mysql": "*",
+    "pluralize": "*",
+    "sync-mysql": "*"
   }
 }
