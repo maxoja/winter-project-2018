@@ -45,13 +45,14 @@ void callChangeName(String id, String token, String name,
 }
 
 void callPostRecipe(
-    String id, String token, String title, String image, int difficulty,
+    String id, String token, String title, String image, String description, int difficulty,
     {Function(Map responseMap) success, Function(String error) failed}) {
   callApi('postRecipe', success, failed, {
     'id': id,
     'token': token,
     'title': title,
     'image': image,
+    'description': description,
     'difficulty': difficulty.toString(),
   });
 }
@@ -61,7 +62,7 @@ void callGetProfile(String uid, {Function(Map responseMap) success, Function(Str
 }
 
 void callRandomRecipes(String id, {Function(Map responseMap) success, Function(String error) failed}){
-  callApi('randomRecipes', success, failed, {
+  callApi('randomRecipes2', success, failed, {
     'id':id
   });
 }

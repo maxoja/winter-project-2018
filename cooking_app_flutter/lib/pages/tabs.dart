@@ -37,7 +37,7 @@ class _TabsPageState extends State<TabsPage> {
           child: TabBarView(
             children: <Widget>[
               ProfilePanel(),
-              FeedPage(),
+              FeedPanel(),
             ],
           ),
         ),

@@ -15,7 +15,7 @@ class Recipe {
   static const List<String> initialTag = const [];
 
   Recipe(this.owner, this.title, this.description, this.difficulty, this.likes,
-      this.dislikes,[this.rid='',this.tags=initialTag, this.imageUrl='assets/temp_food']);
+      this.dislikes,[this.rid='',this.tags=initialTag, this.imageUrl='assets/temp_food.jpg']);
   Recipe.mock() : this(User.mock(), 'ttitle', 'tdescription', 1, 0, 0);
   Recipe.fromJson(Map<String, dynamic> json)
       : owner = User.fromJson(json['owner']),

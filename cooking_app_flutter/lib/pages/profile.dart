@@ -5,6 +5,21 @@ import './add.dart';
 import '../widgets/recipe_grid.dart';
 import '../widgets/user_band.dart';
 import '../scoped_models/app.dart';
+import '../models/user.dart';
+
+// class ProfilePage extends StatelessWidget{
+//   final User user;
+
+// ProfilePage(this.user);
+
+//   @override
+//     Widget build(BuildContext context) {
+//       return Scaffold(
+//         appBar: AppBar(title:Text(user.name)),
+//         body: ProfilePanel(),
+//       );
+//     }
+// }
 
 class ProfilePanel extends StatefulWidget {
   @override

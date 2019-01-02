@@ -17,6 +17,7 @@ class FeedPanel extends StatefulWidget {
 }
 
 class _FeedPanelState extends State<FeedPanel> {
+
   @override
   Widget build(BuildContext context) {
     return ScopedModelDescendant(
@@ -26,7 +27,7 @@ class _FeedPanelState extends State<FeedPanel> {
         return Column(
           children: <Widget>[
             // SizedBox(height: 5,),
-            SearchButton(this),
+            SearchButton(model),
             SizedBox(
               height: 10,
             ),

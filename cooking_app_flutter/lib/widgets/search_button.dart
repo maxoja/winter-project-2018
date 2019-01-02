@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 
+import '../api.dart' as api;
+import '../models/recipe.dart';
+import '../scoped_models/app.dart';
+import '../pages/search.dart';
+
 //can refactor by letting some page that support search
 //to implement an interface instead
 class SearchButton extends StatelessWidget {
-  final State targetPageState;
+  final AppModel model;
 
-  SearchButton(this.targetPageState);
+  SearchButton(this.model);
 
   @override
   Widget build(BuildContext context) {
@@ -22,13 +27,10 @@ class SearchButton extends StatelessWidget {
             Text('Search')
           ],
         ),
-        onPressed: () {
-          print('[ ON PRESSED SEARCH BUTTON ]');
-          /*
-          todo
-          create a request to backend
-          retrieve the data and set data to the page
-          */
+        onPressed: (){
+          Navigator.push(context, MaterialPageRoute(builder: (context){
+            return SearchPage();
+          }));
         },
       ),
     );

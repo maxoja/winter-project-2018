@@ -11,7 +11,7 @@ class TinyUserBand extends StatelessWidget {
     Widget build(BuildContext context) {
       return Row(
         children: <Widget>[
-          CircleAvatar(backgroundImage: AssetImage(user.imageUrl),),
+          CircleAvatar(maxRadius: 15, backgroundImage: AssetImage(user.imageUrl),),
           Text(user.name),
         ],
       );

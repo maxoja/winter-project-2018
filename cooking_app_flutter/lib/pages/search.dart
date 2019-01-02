@@ -6,16 +6,16 @@ import '../models/recipe.dart';
 import '../api.dart' as api;
 import 'recipe.dart';
 
-class AddPage extends StatefulWidget {
+class SearchPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return _AddPageState();
+    return _SearchPageState();
   }
 }
 
-class _AddPageState extends State<AddPage> {
+class _SearchPageState extends State<SearchPage> {
   String _title;
-  String _description; //instruction and ingredient
+  String _tags; //instruction and ingredient
   int _difficulty;
   GlobalKey<FormState> _formKey = GlobalKey();
 
@@ -28,7 +28,7 @@ class _AddPageState extends State<AddPage> {
             brightness: Brightness.light,
             iconTheme: IconThemeData.fallback(),
             title: Text(
-              'Add Your Recipe',
+              'Search Recipe',
               style: TextStyle(color: Colors.black),
             ),
             backgroundColor: Colors.white,
@@ -44,24 +44,14 @@ class _AddPageState extends State<AddPage> {
                     onSaved: (String val) {
                       _title = val.trim();
                     },
-                    validator: (String val) {
-                      if (val.trim().length < 3)
-                        return 'title must long enough';
-                      if (val.trim().length > 30) return 'title too long';
-                    },
                   ),
                   TextFormField(
                     decoration: InputDecoration(
-                      labelText: 'Description',
+                      labelText: 'Tags (Separated by commas)',
                     ),
                     maxLines: 8,
                     onSaved: (String val) {
-                      _description = val.trim();
-                    },
-                    validator: (String val) {
-                      if (val.trim().length < 10)
-                        return 'title must long enough';
-                      if (val.trim().length > 500) return 'title too long';
+                      _tags = val.trim();
                     },
                   ),
                   TextFormField(
@@ -69,9 +59,13 @@ class _AddPageState extends State<AddPage> {
                       labelText: 'Skill Level',
                     ),
                     onSaved: (String val) {
-                      _difficulty = int.parse(val.trim());
+                      if (val == '')
+                        _difficulty = 10;
+                      else
+                        _difficulty = int.parse(val.trim());
                     },
                     validator: (String val) {
+                      if (val == '') return null;
                       int n = int.tryParse(val);
                       if (n == null) return 'must be a number';
                       if (n == 10) return null;
@@ -81,33 +75,22 @@ class _AddPageState extends State<AddPage> {
                   RaisedButton(
                     child: Text('Confirm'),
                     onPressed: () {
+                      /*
+          todo
+          create a request to backend
+          retrieve the data and set data to the page
+          */
                       if (_formKey.currentState.validate()) {
                         _formKey.currentState.save();
-                        api.callPostRecipe(
-                          model.user.id,
-                          model.token,
-                          _title,
-                          'assets/temp_food.jpg',
-                          _description,
-                          _difficulty,
-                          success: (Map responseMap) {
-                            Recipe newRecipe = Recipe(model.user, _title,
-                                _description, _difficulty, 0, 0);
-                            model.addUserRecipe(newRecipe);
-                            // Navigator.pop(context);
-                            // Navigator.push(context, MaterialPageRoute(builder: (context){
-                            //   return RecipePage(newRecipe);
-                            // }));
-                            int i = 0;
-                            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context){
-                              return RecipePage(newRecipe);
-                            }), (Route route){
-                              i += 1;
-                              return i >= 2;
-                            });
-                          },
-                          failed: (String error) {},
-                        );
+                        api.callSearch(_title, _tags.split(','), _difficulty,
+                            success: (response) {
+                          List<Recipe> r = [];
+                          response['recipes'].forEach((a) {
+                            r.add(Recipe.fromJson(a));
+                          });
+                          model.setSearchedRecipes(r);
+                          Navigator.pop(context);
+                        }, failed: (error) {});
                       }
                     },
                   ),

@@ -56,7 +56,8 @@ class _FullRecipeCard extends StatelessWidget {
         child: Column(
           children: <Widget>[
             TinyUserBand(recipe.owner),
-            Divider(),
+            Text(recipe.title),
+            // recipe.imageUrl == null ? Divider() : Image.asset(recipe.imageUrl),
             Text(recipe.description),
             Text(recipe.difficulty.toString()),
             Divider(),
@@ -88,9 +89,10 @@ class _MiniRecipeCard extends StatelessWidget {
       child: MaterialButton(
         child: Column(
           children: <Widget>[
+            Text(recipe.title),
             Text(recipe.description),
             Text(recipe.difficulty.toString()),
-            Divider(),
+            // recipe.imageUrl == null ? Divider() : Image.asset(recipe.imageUrl),
             Text('${recipe.likes} - ${recipe.dislikes}'),
           ],
         ),
