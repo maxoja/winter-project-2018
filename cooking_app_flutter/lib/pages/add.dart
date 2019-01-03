@@ -74,10 +74,10 @@ class _AddPageState extends State<AddPage> {
                         labelText: 'Tags (Separated by commas)',
                       ),
                       onSaved: (String val) {
-                        if(val.trim()=='')
-                        _tags=[];
+                        if (val.trim() == '')
+                          _tags = [];
                         else
-                        _tags = val.trim().split(',');
+                          _tags = val.trim().split(',');
                       },
                     ),
                     TextFormField(
@@ -108,8 +108,15 @@ class _AddPageState extends State<AddPage> {
                             _tags,
                             _difficulty,
                             success: (Map responseMap) {
-                              Recipe newRecipe = Recipe(model.user, _title,
-                                  _description, _difficulty, 0, 0);
+                              Recipe newRecipe = Recipe(
+                                model.user,
+                                _title,
+                                _description,
+                                _difficulty,
+                                0,
+                                0,
+                                responseMap['rid'].toString(),
+                              );
                               model.addUserRecipe(newRecipe);
                               // Navigator.pop(context);
                               // Navigator.push(context, MaterialPageRoute(builder: (context){

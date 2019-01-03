@@ -26,8 +26,8 @@ class _TabsPageState extends State<TabsPage> {
           color: Theme.of(context).accentColor,
           child: TabBar(
             indicatorWeight: 4,
-            indicatorSize: TabBarIndicatorSize.label,
-            indicatorColor: Colors.white,
+            indicatorSize: TabBarIndicatorSize.tab,
+            indicatorColor: Colors.orange,
             tabs: <Widget>[
               // Tab(icon: Icon(Icons.account_circle),text: 'Your Book',),
               Tab(

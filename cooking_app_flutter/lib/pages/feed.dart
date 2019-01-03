@@ -28,9 +28,9 @@ class _FeedPanelState extends State<FeedPanel> {
           children: <Widget>[
             // SizedBox(height: 5,),
             SearchButton(model),
-            SizedBox(
-              height: 10,
-            ),
+            // SizedBox(
+            //   height: 10,
+            // ),
             Expanded(child: RecipeGrid(model.searchedRecipes)),
           ],
         );

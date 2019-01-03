@@ -39,7 +39,7 @@ class _ReactionBarState extends State<ReactionBar> {
       children: <Widget>[
         _ReactionButton(Reaction.Dislike, widget.model, _setReaction),
         _ReactionButton(Reaction.Like, widget.model, _setReaction),
-      ],
+      ].reversed.toList(),
     );
   }
 }
