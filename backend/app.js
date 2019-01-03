@@ -34,15 +34,6 @@ function validateBody(body, properties) {
     return errorMessage;
 }
 
-// function usernameFromID(uid) {
-//     var username = connection.query(`SELECT name FROM users WHERE id = ${uid}`);
-
-//     if (username.length == 0) {
-//         return "";
-//     }
-//     return username[0]['name'];
-// }
-
 function usernameAndImageFromID(uid) {
     var user = connection.query(`SELECT name, imageUrl FROM users WHERE id = ${uid}`);
 
@@ -63,27 +54,7 @@ function addTagToDatabase(tag) {
     return fields['insertId'];
 }
 
-//DEPRECATED
-// function adjustRecipeFormat(recipe, user = null) {
-
-//     var uid = recipe['uid'];
-
-//     if (user === null) {
-//         user = usernameAndImageFromID(uid);
-//         user['id'] = uid;
-//     }
-
-//     recipe['rid'] = recipe['id'];
-//     recipe['owner'] = user;
-//     recipe['tags'] = tagsOfRecipe(recipe['rid']);
-
-//     delete recipe['id'];
-//     delete recipe['uid'];
-
-//     return recipe;
-// }
-
-function adjustRecipeFormat2(recipe, user = null, tags = null) {
+function adjustRecipeFormat(recipe, user = null, tags = null) {
 
     var owner = user === null ? 
                             {"id":recipe['uid'], "name":recipe['username'], "imageUrl":recipe['userImageUrl']} :
@@ -123,8 +94,9 @@ app.all('/requestAccount', function (req, res) {
 
     connection.query(`UPDATE users SET name = '${name}' WHERE token = '${newToken}'`);
 
-    console.log("New User: " + newUser.toString());
     res.json(jsonFactory(true, { "newUser": newUser }));
+
+    console.log("New User: " + JSON.stringify(newUser));
 });
 
 app.all('/changeName', function (req, res) {
@@ -148,8 +120,35 @@ app.all('/changeName', function (req, res) {
 
     connection.query(`UPDATE users SET name = '${name}' WHERE token = '${token}'`);
 
-    console.log(`Name Changed to "${name}"`);
     res.json(jsonFactory(true, { "name": name }));
+
+    console.log(`User ${id} name changed to "${name}".`);
+});
+
+app.all('/changeImage', function (req, res) {
+
+    console.log("\nChange Image");
+
+    var errorMessage = validateBody(req.body, ["id", "token", "image"]);
+    if (errorMessage != "") {
+        console.log(errorMessage);
+        res.json(jsonFactory(false, errorMessage));
+        return;
+    }
+
+    var id = req.body['id'];
+    var token = req.body['token'];
+    var image = req.body['image'];
+
+    if (!validateToken(id, token)) {
+        res.json(jsonFactory(false, "Invalid Token."));
+    }
+
+    connection.query(`UPDATE users SET imageUrl = '${image}' WHERE token = '${token}'`);
+
+    res.json(jsonFactory(true, { "name": name }));
+
+    console.log(`User ${id} image updated.`);
 });
 
 app.all('/postRecipe', function (req, res) {
@@ -171,7 +170,7 @@ app.all('/postRecipe', function (req, res) {
     var difficulty = req.body['difficulty'];
     var tags = req.body['tags'];
 
-    tags = [...new Set(JSON.parse(tags))].map(x => pluralize.singular(x).toLowerCase());
+    tags = [...new Set(JSON.parse(tags.replace(/'/g, "\"")))].map(x => pluralize.singular(x).toLowerCase());
 
     if (!validateToken(id, token)) {
         res.json(jsonFactory(false, "Invalid Token."));
@@ -186,7 +185,8 @@ app.all('/postRecipe', function (req, res) {
     var existingTags = tagTable.map(x => x['tag']);
 
     for (var i in tags) {
-        var tagExist = existingTags.indexOf(tags[i]);
+        var tag = tags[i];
+        var tagExist = existingTags.indexOf(tag);
         var tid;
         if (tagExist == -1) {
             tid = addTagToDatabase(tag);
@@ -200,7 +200,7 @@ app.all('/postRecipe', function (req, res) {
 
     res.json(jsonFactory(true, { "rid": rid }));
 
-    console.log("Posted Recipe ID: " + rid);
+    console.log("Recipe posted\nID: " + rid);
 });
 
 app.all('/getProfile', function (req, res) {
@@ -228,11 +228,11 @@ app.all('/getProfile', function (req, res) {
                                         (SELECT imageUrl FROM users WHERE id = r.uid) as userImageUrl
                                     FROM recipes r 
                                     WHERE uid = ${id}`);
-    recipes = recipes.map(x => adjustRecipeFormat2(x, user));
+    recipes = recipes.map(x => adjustRecipeFormat(x, user));
 
     res.json(jsonFactory(true, { "user": user, "recipes": recipes }));
-    console.log("Profile: " + user.toString());
-    console.log("Recipes: " + recipes.toString());
+    console.log("Profile: " + JSON.stringify(user));
+    console.log("Recipes: " + JSON.stringify(recipes));
 });
 
 app.all('/setReaction', function (req, res) {
@@ -256,11 +256,17 @@ app.all('/setReaction', function (req, res) {
         return;
     }
 
+    if (!["LIKE", "DISLIKE", "NONE"].includes(reaction)) {
+        res.json(jsonFactory(false, `Unknown Reactions ${reaction}`));
+        return;
+    }
+
+    console.log(`User: ${uid}\nRecipe: ${rid}`);
+
     var oldReaction = connection.query(`SELECT reaction FROM reactions WHERE uid = ${uid} and rid = ${rid}`);
 
-    console.log("From " + oldReaction + " to " + reaction);
-
     if (oldReaction.length == 0) {
+        console.log(`From NONE to ${reaction}`);
         if (reaction != "NONE") {
             //NONE -> LIKE/DISLIKE
             var updatingColumnName = reaction == "LIKE" ? 'likes' : 'dislikes';
@@ -276,6 +282,7 @@ app.all('/setReaction', function (req, res) {
         }
     } else {
         oldReaction = oldReaction[0]['reaction'];
+        console.log(`From ${oldReaction} to ${reaction}`);
 
         if (oldReaction != reaction) {
             if (reaction != "NONE") {
@@ -335,41 +342,10 @@ app.all('/currentReaction', function (req, res) {
     
     res.json(jsonFactory(true, { "reaction": result }));
         
-    console.log(`Reaction of ${uid} to ${rid} = ${result}`);
+    console.log(`Reaction: ${uid} == '${result}' => ${rid}`);
 });
 
-//DEPRECATED ------------------------------------------------------------------------
-// app.all('/randomRecipes', function (req, res) {
-
-//     console.log("\nRandom Recipes");
-
-//     var errorMessage = validateBody(req.body, ["id"]);
-//     if (errorMessage != "") {
-//         console.log(errorMessage);
-//         res.json(jsonFactory(false, errorMessage));
-//         return;
-//     }
-
-//     var uid = req.body['id'];
-
-//     var recipes = connection.query(`SELECT * FROM recipes WHERE uid != ${uid}`);
-
-//     var recipeCount = recipes.length > RANDOM_RECIPE_COUNT ? RANDOM_RECIPE_COUNT : recipes.length;
-
-//     var pickedRecipes = []
-//     for (var i = 0; i < recipeCount; ++i) {
-//         var randomizedIndex = Math.floor(Math.random() * recipes.length);
-//         pickedRecipes.push(recipes[randomizedIndex]);
-//         recipes.splice(randomizedIndex, 1);
-//     }
-
-//     pickedRecipes = pickedRecipes.map(x => adjustRecipeFormat(x));
-
-//     res.json(jsonFactory(true, { "recipes": pickedRecipes }));
-// });
-//DEPRECATED ------------------------------------------------------------------------
-
-app.all('/randomRecipes2', function (req, res) {
+app.all('/randomRecipes', function (req, res) {
 
     console.log("\nRandom Recipes");
 
@@ -388,18 +364,20 @@ app.all('/randomRecipes2', function (req, res) {
                                     FROM recipes r
                                     WHERE r.uid != ${uid}
                                     ORDER BY RAND()
-                                    LIMIT 10`);
+                                    LIMIT ${RANDOM_RECIPE_COUNT}`);
 
-    recipes = recipes.map(x => adjustRecipeFormat2(x));
+    recipes = recipes.map(x => adjustRecipeFormat(x));
 
     res.json(jsonFactory(true, {"recipes": recipes}));
+
+    console.log(`Returning ${recipes.length} random recipes.`);
 });
 
 app.all('/search', function (req, res) {
 
     console.log("\nSearch Recipes");
 
-    var errorMessage = validateBody(req.body, ["title", "tags", "difficulty"]);
+    var errorMessage = validateBody(req.body, ["title", "tags", "difficulty", "order"]);
     if (errorMessage != "") {
         console.log(errorMessage);
         res.json(jsonFactory(false, errorMessage));
@@ -409,11 +387,24 @@ app.all('/search', function (req, res) {
     var title = req.body['title'];
     var tags = req.body['tags'];
     var difficulty = req.body['difficulty'];
+    var order = req.body['order'];
 
-    tags = [...new Set(JSON.parse(tags))].map(x => pluralize.singular(x).toLowerCase());
+    console.log(`Title: ${title}\nTags: ${tags}\nDifficulty: ${difficulty}\nOrder by: ${order}`);
+
+    tags = [...new Set(JSON.parse(tags.replace(/'/g, "\"")))].map(x => pluralize.singular(x).toLowerCase());
 
     var titleCondition = `title LIKE '%${title}%'`;
     var difficultyCondition = difficulty === null ? '' : `and difficulty <= ${difficulty}`;;
+    var orderBy;
+
+    switch (order) {
+        case 'NEW': orderBy = "r.id DESC"; break;
+        case 'OLD': orderBy = "r.id ASC"; break;
+        case 'LIKES': orderBy = "likes"; break;
+        case 'DISLIKES': orderBy = "dislikes"; break;
+        case 'DISLIKES': orderBy = "dislikes"; break;
+        default: res.json(jsonFactory(false, `Unknown Order key ${order}`)); return;
+    }
 
     var recipes = connection.query(`SELECT *,
                                         (SELECT name FROM users WHERE id = r.uid) as username, 
@@ -434,12 +425,14 @@ app.all('/search', function (req, res) {
             }
         }
         if (matched) {
-            matchedRecipe.push(adjustRecipeFormat2(recipes[i], null, recipeTags));
+            matchedRecipe.push(adjustRecipeFormat(recipes[i], null, recipeTags));
             if (matchedRecipe.length >= MAX_SEARCHED_RECIPE_COUNT) break;
         }
     }
 
     res.json(jsonFactory(true, { "recipes": matchedRecipe }));
+
+    console.log(`${matchedRecipe.length} match recipes.`);
 });
 
 PORT = 3000
