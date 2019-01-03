@@ -25,10 +25,39 @@ class _TabsPageState extends State<TabsPage> {
         bottomNavigationBar: Container(
           color: Theme.of(context).accentColor,
           child: TabBar(
+            indicatorWeight: 4,
+            indicatorSize: TabBarIndicatorSize.label,
             indicatorColor: Colors.white,
             tabs: <Widget>[
-              Tab(icon: Icon(Icons.account_circle)),
-              Tab(icon: Icon(Icons.receipt)),
+              // Tab(icon: Icon(Icons.account_circle),text: 'Your Book',),
+              Tab(
+                
+                // text:'Cook Book',
+                // child:Container(),
+                  child:Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(height: 2,),
+                    Icon(Icons.book),
+                    SizedBox(height: 0,),
+                    Text('Your Book'),
+                    SizedBox(height: 2,),
+                  ],
+                ),
+              ),Tab(
+                // text: 'Explore',
+                // child:Container(),
+                  child:Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(height: 2,),
+                    Icon(Icons.find_in_page),
+                    SizedBox(height: 0,),
+                    Text('Explore'),
+                    SizedBox(height: 2,),
+                  ],
+                ),
+              ),
             ],
           ),
         ),

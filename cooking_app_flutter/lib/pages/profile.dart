@@ -42,13 +42,13 @@ class _ProfilePanelState extends State<ProfilePanel> {
         return Scaffold(
           // appBar: AppBar(title:Text('Profile')),
           floatingActionButton: FloatingActionButton(
-            child: Icon(Icons.add),
+            backgroundColor: Color(0xfffff6e7),
+            child: Icon(Icons.create,color: Colors.brown,),
             onPressed: () => _onPressedAdd(context),
           ),
           body: Column(
             children: <Widget>[
               EpicUserBand(model.user),
-              Divider(),
               Expanded(
                 child: RecipeGrid(
                   model.userRecipes,

@@ -2,6 +2,7 @@ import 'package:scoped_model/scoped_model.dart';
 
 import '../models/user.dart';
 import '../models/recipe.dart';
+import '../widgets/reaction_bar.dart';
 
 class AppModel extends Model {
   User _user = User.mock();
@@ -9,6 +10,7 @@ class AppModel extends Model {
   List<Recipe> _searchedRecipes = [];
   String _token;
   Recipe _selectedRecipe;
+  Reaction _currentReaction;
   //filters information should be here
   //because it's supposed to be easy to manage
   //since this page would not be destroyed after a search is executed
@@ -26,6 +28,8 @@ class AppModel extends Model {
   String get token => _token;
 
   Recipe get selectedRecipe => _selectedRecipe;
+
+  Reaction get currentReaction => _currentReaction;
 
   AppModel() {
     // for(int i = 0 ; i < 10 ; i++)
@@ -49,6 +53,11 @@ class AppModel extends Model {
 
   void setSelectedRecipe(Recipe recipe){
     _selectedRecipe = recipe;
+    notifyListeners();
+  }
+
+  void setCurrentReaction(Reaction reaction){
+    _currentReaction = reaction;
     notifyListeners();
   }
 

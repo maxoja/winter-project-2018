@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
+import 'widgets/reaction_bar.dart';
+
 // const String domain = 'cookbooknoip.zapto.org';
 const String ip = '100.81.200.212';
 const String port = '3000';
@@ -45,7 +47,7 @@ void callChangeName(String id, String token, String name,
 }
 
 void callPostRecipe(
-    String id, String token, String title, String image, String description, int difficulty,
+    String id, String token, String title, String image, String description, List<String> tags, int difficulty,
     {Function(Map responseMap) success, Function(String error) failed}) {
   callApi('postRecipe', success, failed, {
     'id': id,
@@ -54,6 +56,7 @@ void callPostRecipe(
     'image': image,
     'description': description,
     'difficulty': difficulty.toString(),
+    'tags': tags.map((ing)=>'"'+ing+'"').toList().toString(),
   });
 }
 
@@ -62,7 +65,7 @@ void callGetProfile(String uid, {Function(Map responseMap) success, Function(Str
 }
 
 void callRandomRecipes(String id, {Function(Map responseMap) success, Function(String error) failed}){
-  callApi('randomRecipes2', success, failed, {
+  callApi('randomRecipes', success, failed, {
     'id':id
   });
 }
@@ -76,11 +79,11 @@ void callCurrentReaction(String uid, String token, String rid, {Function(Map res
   });
 }
 
-void callSetReaction(String uid, String token, String reaction, String rid, {Function(Map responseMap) success, Function(String error) failed}){
+void callSetReaction(String uid, String token, Reaction reaction, String rid, {Function(Map responseMap) success, Function(String error) failed}){
   callApi('setReaction', success, failed, {
     'uid': uid,
     'token': token,
-    'reaction': reaction,
+    'reaction': reaction.toString().toUpperCase().split('.')[1],
     'rid': rid,
   });
 }
@@ -89,7 +92,8 @@ void callSetReaction(String uid, String token, String reaction, String rid, {Fun
 void callSearch(String title, List<String> tags, int difficulty, {Function(Map responseMap) success, Function(String error) failed}){
   callApi('search', success, failed, {
     'title':title,
-    'tags': tags.map((ing)=>'"'+ing+'"').toString(),
+    'order':"NEW",
+    'tags': tags.map((t)=>'"'+t+'"').toList().toString(),
     'difficulty': difficulty.toString(),
   });
 }

@@ -4,7 +4,6 @@ import 'package:scoped_model/scoped_model.dart';
 import '../scoped_models/app.dart';
 import '../models/recipe.dart';
 import '../api.dart' as api;
-import 'recipe.dart';
 
 class SearchPage extends StatefulWidget {
   @override
@@ -15,7 +14,7 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   String _title;
-  String _tags; //instruction and ingredient
+  List<String> _tags; //instruction and ingredient
   int _difficulty;
   GlobalKey<FormState> _formKey = GlobalKey();
 
@@ -49,9 +48,11 @@ class _SearchPageState extends State<SearchPage> {
                     decoration: InputDecoration(
                       labelText: 'Tags (Separated by commas)',
                     ),
-                    maxLines: 8,
                     onSaved: (String val) {
-                      _tags = val.trim();
+                      if (val.trim() == '')
+                        _tags = [];
+                      else
+                        _tags = val.trim().split(',');
                     },
                   ),
                   TextFormField(
@@ -82,7 +83,7 @@ class _SearchPageState extends State<SearchPage> {
           */
                       if (_formKey.currentState.validate()) {
                         _formKey.currentState.save();
-                        api.callSearch(_title, _tags.split(','), _difficulty,
+                        api.callSearch(_title, _tags, _difficulty,
                             success: (response) {
                           List<Recipe> r = [];
                           response['recipes'].forEach((a) {

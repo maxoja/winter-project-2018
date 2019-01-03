@@ -18,7 +18,8 @@ class RecipeGrid extends StatelessWidget {
     return ScopedModelDescendant<AppModel>(
       builder: (context, child, AppModel model) {
     Recipe recipe = recipes[index];
-        return minimal ? _MiniRecipeCard(recipe, model) : _FullRecipeCard(recipe, model);
+        return _FullRecipeCard(recipe, model);
+        // return minimal ? _MiniRecipeCard(recipe, model) : _FullRecipeCard(recipe, model);
       },
     );
   }
@@ -45,7 +46,7 @@ class _FullRecipeCard extends StatelessWidget {
   void _onPressedCard(BuildContext context) {
     model.setSelectedRecipe(recipe);
     Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return RecipePage(recipe);
+      return RecipePage(recipe, model);
     }));
   }
 
@@ -70,34 +71,34 @@ class _FullRecipeCard extends StatelessWidget {
   }
 }
 
-class _MiniRecipeCard extends StatelessWidget {
-  final Recipe recipe;
-  final AppModel model;
+// class _MiniRecipeCard extends StatelessWidget {
+//   final Recipe recipe;
+//   final AppModel model;
 
-  _MiniRecipeCard(this.recipe, this.model);
+//   _MiniRecipeCard(this.recipe, this.model);
 
-  void _onPressedCard(BuildContext context) {
-    model.setSelectedRecipe(recipe);
-    Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return RecipePage(recipe);
-    }));
-  }
+//   void _onPressedCard(BuildContext context) {
+//     model.setSelectedRecipe(recipe);
+//     Navigator.push(context, MaterialPageRoute(builder: (context) {
+//       return RecipePage(recipe);
+//     }));
+//   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: MaterialButton(
-        child: Column(
-          children: <Widget>[
-            Text(recipe.title),
-            Text(recipe.description),
-            Text(recipe.difficulty.toString()),
-            // recipe.imageUrl == null ? Divider() : Image.asset(recipe.imageUrl),
-            Text('${recipe.likes} - ${recipe.dislikes}'),
-          ],
-        ),
-        onPressed: () => _onPressedCard(context),
-      ),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Card(
+//       child: MaterialButton(
+//         child: Column(
+//           children: <Widget>[
+//             Text(recipe.title),
+//             Text(recipe.description),
+//             Text(recipe.difficulty.toString()),
+//             // recipe.imageUrl == null ? Divider() : Image.asset(recipe.imageUrl),
+//             Text('${recipe.likes} - ${recipe.dislikes}'),
+//           ],
+//         ),
+//         onPressed: () => _onPressedCard(context),
+//       ),
+//     );
+//   }
+// }

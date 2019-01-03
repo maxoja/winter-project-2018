@@ -14,6 +14,17 @@ class MyApp extends StatelessWidget {
     return ScopedModel<AppModel>(
       model: AppModel(),
       child: MaterialApp(
+        theme: ThemeData(
+          // bottomAppBarColor: Color(0xffd24019),
+          // accentColor: Color(0xffd24019),
+          // accentColor: Color(0xffea7c46),
+          accentColor: Color(0xffd24019),
+          primaryColor: Color(0xffd24019),
+          // backgroundColor: Color(0xffd24019),
+          // scaffoldBackgroundColor: Color(0xffffdd9c),
+          scaffoldBackgroundColor: Color(0xffffe6bc),
+          buttonColor: Colors.white,
+          ),
         title: 'Cooking App',
         home: LandingPage(),
       ),
